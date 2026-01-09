@@ -1,8 +1,11 @@
-<nav>
-  <a routerLink="/labrary">Labrary</a>
-  <tr></tr>
-  <a routerLink="/track">Track</a>
+<nav class="bg-white shadow p-4 mb-4">
+  <div class="container mx-auto flex justify-between items-center">
+    <a routerLink="/" class="text-2xl font-bold text-indigo-600">MusicStream</a>
+    <a routerLink="/library" class="text-gray-600 hover:text-indigo-600">labrary</a>
+  </div>
 </nav>
 
 
 <router-outlet></router-outlet>
+
+<app-player></app-player>
