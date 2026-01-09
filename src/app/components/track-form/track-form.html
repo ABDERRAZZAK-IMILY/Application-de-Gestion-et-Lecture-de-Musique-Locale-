@@ -1,0 +1,13 @@
+<div>
+    <h1>Add new track</h1>
+    <form [formGroup]="trackForm" (ngSubmit)="onSubmit()">
+        <input type="text" formControlName="title" placeholder="Title" />
+        <textarea formControlName="description" placeholder="Description"></textarea>
+        <input type="text" formControlName="artist" placeholder="Artist" />
+        <input type="text" formControlName="genre" placeholder="Genre" />
+        <input type="file" (change)="onAudioSelected($event)" accept="audio/*" />
+        <button type="submit" [disabled]="isSubmitting() || trackForm.invalid">
+            {{ isSubmitting() ? 'Submitting...' : 'Add Track' }}
+        </button>
+    </form>
+</div>
