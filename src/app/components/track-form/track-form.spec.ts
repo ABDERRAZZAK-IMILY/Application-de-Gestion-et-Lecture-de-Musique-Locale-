@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { Singerdetaills } from './singerdetaills';
+import { TrackForm } from './track-form';
 
-describe('Singerdetaills', () => {
-  let component: Singerdetaills;
-  let fixture: ComponentFixture<Singerdetaills>;
+describe('TrackForm', () => {
+  let component: TrackForm;
+  let fixture: ComponentFixture<TrackForm>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Singerdetaills]
+      imports: [TrackForm]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(Singerdetaills);
+    fixture = TestBed.createComponent(TrackForm);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
