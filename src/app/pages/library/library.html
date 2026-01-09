@@ -1,0 +1,7 @@
+@for (item of tracksloaded(); track item.id) {
+  <div (click)="onPlayTrack(item, $event); setClicked()">
+
+    <p>{{ item.title }}</p>
+    
+  </div>
+}
