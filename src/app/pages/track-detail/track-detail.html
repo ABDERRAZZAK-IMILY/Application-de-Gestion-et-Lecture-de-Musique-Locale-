@@ -1,1 +1,8 @@
-<p>track-detail works!</p>
+@if (getTrackById(); as track) {
+    <div class="track-detail-container">
+        <h2>{{ track.title }}</h2>
+        <p>Artist: {{ track.artist }}</p>
+        <p>Descrption: {{ track.description }}</p>
+        <p>Duration: {{ track.duration }}</p>
+    </div>
+}
