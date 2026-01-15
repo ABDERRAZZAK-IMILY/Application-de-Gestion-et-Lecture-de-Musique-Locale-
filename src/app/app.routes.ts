@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './auth/auth.guard';
 
 export const routes: Routes = [
 {
@@ -18,4 +19,9 @@ export const routes: Routes = [
     path: 'add',
     loadComponent: () => import('./components/track-form/track-form').then(m => m.TrackFormComponent)
 },
+{
+  path : '**',
+  canActivate: [authGuard],
+  loadComponent: () => import('./pages/error404/error404').then(m => m.Error404)
+}
 ];
