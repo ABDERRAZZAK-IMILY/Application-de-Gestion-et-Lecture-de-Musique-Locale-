@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from "@angular/core";
+import { Component, computed, effect, inject, OnInit, signal } from "@angular/core";
 import { TrackService } from "../../services/track";
 import { Track } from "../../models/track.model";
 import { RouterLink } from "@angular/router";
@@ -6,15 +6,25 @@ import { AudioPlayerService } from "../../services/audio-player";
 
 @Component({
     selector: 'app-library',
-    imports: [],
+    imports: [RouterLink],
     templateUrl: './library.html',
     styleUrl: './library.css',
 })
-export class Library {
+export class Library implements OnInit {
 
 trackService = inject(TrackService);
 audioPlayer = inject(AudioPlayerService);
 
+ngOnInit() {
+  this.trackService.init();
+}
+
+constructor() {
+  effect(() => {
+    const allTracks = this.trackService.getAllTracks();
+    this.audioPlayer.playlist.set(allTracks);
+  });
+}
 
 setClicked(){
   this.audioPlayer.isclicked.set(true);

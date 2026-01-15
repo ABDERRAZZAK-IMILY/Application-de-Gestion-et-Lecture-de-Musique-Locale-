@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject, Input, signal } from '@angular/core';
+import { TrackService } from '../../services/track';
 
 @Component({
   selector: 'app-track-detail',
@@ -7,5 +8,41 @@ import { Component } from '@angular/core';
   styleUrl: './track-detail.css',
 })
 export class TrackDetail {
+
+trackservice = inject(TrackService)
+
+title = signal('');
+artist = signal('');
+description = signal('');
+addedDate = signal<Date | null>(null);
+duration = signal(0);
+genre = signal('');
+coverImage = signal<Blob | string | null>(null);
+audioUrl = signal('');
+
+
+
+@Input() id! : string;
+
+
+getTrackById(){
+  return this.trackservice.getTrackById(this.id);
+}
+
+
+loadTrackdetails(){
+  const track = this.getTrackById();
+  if(track){
+    this.title.set(track.title);
+    this.artist.set(track.artist);
+    this.description.set(track.description || '');
+    this.addedDate.set(track.addedDate);
+    this.duration.set(track.duration);
+    this.genre.set(track.genre);
+    this.coverImage.set(track.coverImage || null);
+    this.audioUrl.set(track.audioUrl);
+  }
+}
+
 
 }

@@ -13,6 +13,9 @@ export class AudioPlayerService {
   duration = signal(0);
   volume = signal(0.5);
 
+  currentIndex = signal(0);
+  playlist = signal<Track[]>([]);
+
   isLoading = signal(false);
 
   constructor() {
@@ -46,6 +49,11 @@ export class AudioPlayerService {
 
     this.isLoading.set(true);
     this.currentTrack.set(track);
+
+    const index = this.playlist().findIndex(t => t.id === track.id);
+    if (index !== -1) {
+      this.currentIndex.set(index);
+    }
     
     if (track.audioFile) {
       const url = URL.createObjectURL(track.audioFile);
@@ -83,6 +91,47 @@ export class AudioPlayerService {
     this.audio.volume = vol;
   }
 
+  progress = computed(() => {
+  if (this.duration() === 0) return 0;
+  return (this.currentTime() / this.duration()) * 100;
+});
 
-   isclicked = signal<boolean>(false);
+
+next() {
+  const playlistLength = this.playlist().length;
+  if (playlistLength === 0) return;
+  
+  const nextIndex = (this.currentIndex() + 1) % playlistLength;
+  this.currentIndex.set(nextIndex);
+  const nextTrack = this.playlist()[nextIndex];
+  if (nextTrack) {
+    this.isLoading.set(true);
+    this.currentTrack.set(nextTrack);
+    if (nextTrack.audioFile) {
+      const url = URL.createObjectURL(nextTrack.audioFile);
+      this.audio.src = url;
+      this.audio.load();
+    }
+  }
+}
+
+previous() {
+  const playlistLength = this.playlist().length;
+  if (playlistLength === 0) return;
+  
+  const prevIndex = (this.currentIndex() - 1 + playlistLength) % playlistLength;
+  this.currentIndex.set(prevIndex);
+  const prevTrack = this.playlist()[prevIndex];
+  if (prevTrack) {
+    this.isLoading.set(true);
+    this.currentTrack.set(prevTrack);
+    if (prevTrack.audioFile) {
+      const url = URL.createObjectURL(prevTrack.audioFile);
+      this.audio.src = url;
+      this.audio.load();
+    }
+  }
+}
+
+  isclicked = signal<boolean>(false);
 }

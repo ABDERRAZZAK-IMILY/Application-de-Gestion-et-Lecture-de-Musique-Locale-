@@ -1,6 +1,7 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { Track } from '../models/track.model';
 import { StorageService } from './storage';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -14,9 +15,11 @@ export class TrackService {
   
   error = signal<string | null>(null);
 
-  constructor() {
-    this.loadTracks();
-  }
+init() {
+  this.loadTracks();
+}
+
+
 
     async loadTracks() {
         this.isLoading.set(true);
@@ -52,6 +55,11 @@ export class TrackService {
 
     getAllTracks(): Track[] {
         return this.tracksSignal();
+    }
+
+
+    getTrackById(id: string): Track | undefined {
+        return this.tracksSignal().find(track => track.id === id);
     }
 
 

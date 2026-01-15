@@ -2,7 +2,6 @@ import { Component, inject, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AudioPlayerService } from '../../services/audio-player';
-import { Library } from '../../pages/library/library';
 
 @Component({
   selector: 'app-player',
