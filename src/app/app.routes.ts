@@ -20,6 +20,10 @@ export const routes: Routes = [
     loadComponent: () => import('./components/track-form/track-form').then(m => m.TrackFormComponent)
 },
 {
+    path: 'edit/:id',
+    loadComponent: () => import('./components/track-form/track-form').then(m => m.TrackFormComponent)
+},
+{
   path : '**',
   canActivate: [authGuard],
   loadComponent: () => import('./pages/error404/error404').then(m => m.Error404)
