@@ -4,5 +4,13 @@
         <p class="text-lg text-gray-300 mb-2"><span class="font-semibold text-gray-100">Artist:</span> {{ track.artist }}</p>
         <p class="text-lg text-gray-300 mb-2"><span class="font-semibold text-gray-100">Description:</span> {{ track.description }}</p>
         <p class="text-lg text-gray-300"><span class="font-semibold text-gray-100">Duration:</span> {{  track.duration /60 }}</p>
+
+        <a 
+  [routerLink]="['/edit', track.id]"
+  class="text-indigo-400 hover:text-indigo-600 p-1 hover:bg-indigo-50 rounded-full transition"
+  (click)="$event.stopPropagation()"
+>
+  ✏️
+</a>
     </div>
 }
