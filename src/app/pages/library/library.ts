@@ -65,6 +65,12 @@ tracksloaded = computed(() => {
 
 
 
+
+deleteTrack(id: string){
+this.trackService.removeTrack(id);
+}
+
+
 onPlayTrack(track: Track,  event: Event) {
   event.stopPropagation();
   this.audioPlayer.playTrack(track);

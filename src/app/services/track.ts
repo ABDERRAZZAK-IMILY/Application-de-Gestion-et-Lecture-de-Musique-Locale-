@@ -62,5 +62,16 @@ init() {
         return this.tracksSignal().find(track => track.id === id);
     }
 
+    removeTrack(id: string) {
+        return this.storage.delete(id);
+    }
+
+updateTrack(id: string, updatedTrack: Track) {
+        this.storage.update(id, updatedTrack);
+        this.tracksSignal.update(tracks =>
+            tracks.map(t => t.id === id ? updatedTrack : t)
+        );
+
+}
 
 }

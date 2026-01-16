@@ -25,4 +25,9 @@ export class StorageService {
         return db.tracks.delete(id);
     }
 
+
+   update(id: string, music: Track) {
+    return db.tracks.update(id, music);
+}
+
 }
