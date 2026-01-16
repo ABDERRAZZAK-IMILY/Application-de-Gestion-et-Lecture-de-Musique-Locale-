@@ -1,9 +1,10 @@
 import { Component, inject, Input, signal } from '@angular/core';
 import { TrackService } from '../../services/track';
+import { RouterLink } from "@angular/router";
 
 @Component({
   selector: 'app-track-detail',
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './track-detail.html',
   styleUrl: './track-detail.css',
 })
@@ -41,6 +42,21 @@ loadTrackdetails(){
     this.genre.set(track.genre);
     this.coverImage.set(track.coverImage || null);
     this.audioUrl.set(track.audioUrl);
+  }
+}
+
+
+
+updateTrack(){
+  const track = this.getTrackById();
+  if(track){
+    track.title = this.title();
+    track.artist = this.artist();
+    track.description = this.description();
+    track.duration = this.duration();
+    track.genre = this.genre();
+    track.audioUrl = this.audioUrl();
+    this.trackservice.updateTrack(this.id, track);
   }
 }
 
