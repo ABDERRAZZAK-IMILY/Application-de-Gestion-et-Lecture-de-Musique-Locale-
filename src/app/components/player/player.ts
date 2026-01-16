@@ -15,12 +15,6 @@ export class PlayerComponent {
 
  isclick = this.playerService.isclicked;
 
-  get currentTrack() { return this.playerService.currentTrack(); }
-  get isPlaying() { return this.playerService.isPlaying(); }
-  get currentTime() { return this.playerService.currentTime(); }
-  get duration() { return this.playerService.duration(); }
-  get volume() { return this.playerService.volume(); }
-
   onSeek(event: any) {
     this.playerService.seekTo(event.target.value);
   }
