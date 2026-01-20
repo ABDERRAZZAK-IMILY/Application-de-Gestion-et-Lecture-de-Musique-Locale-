@@ -1,77 +1,78 @@
-import { Injectable, inject, signal, computed } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { ActionCreator, Creator, Store } from '@ngrx/store';
+import { Actions, ofType } from '@ngrx/effects';
+import { take } from 'rxjs';
 import { Track } from '../models/track.model';
-import { StorageService } from './storage';
-import { HttpClient } from '@angular/common/http';
+import * as TrackActions from '../state/track/track.actions';
+import {
+  selectAllTracks,
+  selectTrackById,
+  selectTracksError,
+  selectTracksLoading
+} from '../state/track/track.selectors';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TrackService {
-  private storage = inject(StorageService);
+  private store = inject(Store);
+  private actions$ = inject(Actions);
 
-  private tracksSignal = signal<Track[]>([]);
-  
-  isLoading = signal<boolean>(false)
-  
-  error = signal<string | null>(null);
+  tracks = this.store.selectSignal(selectAllTracks);
+  isLoading = this.store.selectSignal(selectTracksLoading);
+  error = this.store.selectSignal(selectTracksError);
 
-init() {
-  this.loadTracks();
-}
-
-
-
-    async loadTracks() {
-        this.isLoading.set(true);
-        this.error.set(null);
-        try {
-            const tracks = await this.storage.getAll();
-            this.tracksSignal.set(tracks);
-        }
-        catch (err) {
-            this.error.set('Failed to load tracks.');
-        }
-        finally {
-            this.isLoading.set(false);
-        }
-    }
-
-    addTrack(track: Track) {
-       
-         const supportedTypes = ['audio/mpeg', 'audio/wav', 'audio/ogg'];
-
-  if (!supportedTypes.includes(track.audioFile.type) || track.audioFile.size > 10 * 1024 * 1024) {
-
-     this.error.set('Audio file must be MP3, WAV, or OGG and less than 10MB in size.');
-     return Promise.reject(new Error('Invalid audio file.'));
+  init() {
+    this.store.dispatch(TrackActions.loadTracks());
   }
 
-        return this.storage.add(track).then(() => {
-            this.tracksSignal.update(tracks => [...tracks, track]);
-        });
+  addTrack(track: Track) {
+    const supportedTypes = ['audio/mpeg', 'audio/wav', 'audio/ogg'];
+
+    if (!supportedTypes.includes(track.audioFile.type) || track.audioFile.size > 10 * 1024 * 1024) {
+      this.store.dispatch(
+        TrackActions.addTrackFailure({
+          error: 'Audio file must be MP3, WAV, or OGG and less than 10MB in size.'
+        })
+      );
+      return Promise.reject(new Error('Invalid audio file.'));
     }
 
+    this.store.dispatch(TrackActions.addTrack({ track }));
+    return this.waitForCompletion(TrackActions.addTrackSuccess, TrackActions.addTrackFailure);
+  }
 
+  getAllTracks(): Track[] {
+    return this.tracks();
+  }
 
-    getAllTracks(): Track[] {
-        return this.tracksSignal();
-    }
+  getTrackById(id: string): Track | undefined {
+    return this.store.selectSignal(selectTrackById(id))();
+  }
 
+  removeTrack(id: string) {
+    this.store.dispatch(TrackActions.removeTrack({ id }));
+    return this.waitForCompletion(TrackActions.removeTrackSuccess, TrackActions.removeTrackFailure);
+  }
 
-    getTrackById(id: string): Track | undefined {
-        return this.tracksSignal().find(track => track.id === id);
-    }
+  updateTrack(id: string, updatedTrack: Track) {
+    const track = { ...updatedTrack, id };
+    this.store.dispatch(TrackActions.updateTrack({ track }));
+    return this.waitForCompletion(TrackActions.updateTrackSuccess, TrackActions.updateTrackFailure);
+  }
 
-    removeTrack(id: string) {
-        return this.storage.delete(id);
-    }
-
-updateTrack(id: string, updatedTrack: Track) {
-        this.storage.update(id, updatedTrack);
-        this.tracksSignal.update(tracks =>
-            tracks.map(t => t.id === id ? updatedTrack : t)
-        );
-
-}
-
+  private waitForCompletion(
+    successAction: ActionCreator<string, Creator>,
+    failureAction: ActionCreator<string, Creator>
+  ) {
+    return new Promise<void>((resolve, reject) => {
+      this.actions$.pipe(ofType(successAction, failureAction), take(1)).subscribe(action => {
+        if ('error' in action) {
+          reject(new Error(action.error));
+        } else {
+          resolve();
+        }
+      });
+    });
+  }
 }
